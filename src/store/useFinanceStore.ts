@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { create } from 'zustand';
 
 import { initDB } from '../database/db';
@@ -162,3 +163,27 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     }
   },
 }));
+
+export const useBalanceChartData = () => {
+  const transactions = useFinanceStore((state) => state.transactions);
+
+  return useMemo(() => {
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    for (const current of transactions) {
+      if (current.category_type === 'income') {
+        totalIncome += current.amount;
+      } else {
+        totalExpense += current.amount;
+      }
+    }
+
+    const data = [
+      { value: totalIncome, text: 'Ingresos', color: '#fda4af' },
+      { value: totalExpense, text: 'Gastos', color: '#e11d48' },
+    ];
+
+    return data.filter((item) => item.value > 0);
+  }, [transactions]);
+};

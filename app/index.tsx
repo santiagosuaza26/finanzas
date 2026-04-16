@@ -1,133 +1,192 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useFinanceStore } from '../src/store/useFinanceStore';
+import { AppTheme } from '../src/constants/theme';
+import ExpenseChart from '../src/components/ExpenseChart';
+
+import { useFinanceStore, type TimeFilter } from '../src/store/useFinanceStore';
 
 const currencyFormatter = new Intl.NumberFormat('es-CO', {
-	style: 'currency',
-	currency: 'COP',
-	maximumFractionDigits: 0,
+  style: 'currency',
+  currency: 'COP',
+  maximumFractionDigits: 0,
 });
 
+const timeFilters: { label: string; value: TimeFilter }[] = [
+  { label: 'Hoy', value: 'today' },
+  { label: 'Semana', value: 'week' },
+  { label: 'Mes', value: 'month' },
+  { label: 'Todo', value: 'all' },
+];
+
 function formatDate(timestamp: number) {
-	return new Date(timestamp).toLocaleDateString('es-CO', {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
+  return new Date(timestamp).toLocaleDateString('es-CO', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 }
 
 export default function HomeScreen() {
-	const transactions = useFinanceStore((state) => state.transactions);
+  const transactions = useFinanceStore((state) => state.transactions);
+  const timeFilter = useFinanceStore((state) => state.timeFilter);
+  const setTimeFilter = useFinanceStore((state) => state.setTimeFilter);
 
-	const balance = useMemo(() => {
-		return transactions.reduce((acc, item) => {
-			if (item.category_type === 'income') {
-				return acc + item.amount;
-			}
-			return acc - item.amount;
-		}, 0);
-	}, [transactions]);
+  const balance = useMemo(() => {
+    return transactions.reduce((acc, item) => {
+      if (item.category_type === 'income') {
+        return acc + item.amount;
+      }
+      return acc - item.amount;
+    }, 0);
+  }, [transactions]);
 
-	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
-			<View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}>
-				<Text style={{ fontSize: 26, fontWeight: '800', color: '#f8fafc' }}>Mis Finanzas</Text>
-				<Text style={{ marginTop: 4, fontSize: 14, color: '#94a3b8' }}>Controla tus ingresos y egresos</Text>
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: AppTheme.colors.bg }} edges={['top', 'left', 'right']}>
+      <LinearGradient colors={AppTheme.gradients.background} style={{ flex: 1, paddingHorizontal: 20, paddingTop: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 26, fontWeight: '900', color: AppTheme.colors.text }}>Mis Finanzas</Text>
+          <Pressable
+            onPress={() => router.push('/settings')}
+            style={{
+              height: 42,
+              width: 42,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 999,
+              borderWidth: 1,
+              borderColor: AppTheme.colors.border,
+              backgroundColor: AppTheme.colors.card,
+            }}
+          >
+            <Text style={{ fontSize: 18 }}>⚙️</Text>
+          </Pressable>
+        </View>
+        <Text style={{ marginTop: 4, fontSize: 14, color: AppTheme.colors.textMuted }}>Controla tus ingresos y egresos</Text>
 
-				<View
-					style={{
-						marginTop: 18,
-						borderRadius: 18,
-						backgroundColor: '#0f172a',
-						borderWidth: 1,
-						borderColor: '#1e293b',
-						padding: 18,
-					}}
-				>
-					<Text style={{ fontSize: 12, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.7 }}>
-						Balance Total
-					</Text>
-					<Text
-						style={{
-							marginTop: 10,
-							fontSize: 34,
-							fontWeight: '900',
-							color: balance >= 0 ? '#34d399' : '#fb7185',
-						}}
-					>
-						{currencyFormatter.format(balance)}
-					</Text>
-				</View>
+        <LinearGradient
+          colors={AppTheme.gradients.card}
+          style={{
+            marginTop: 18,
+            borderRadius: 18,
+            borderWidth: 1,
+            borderColor: AppTheme.colors.border,
+            padding: 18,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: AppTheme.colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.9 }}>
+            Balance Total
+          </Text>
+          <Text
+            style={{
+              marginTop: 10,
+              fontSize: 34,
+              fontWeight: '900',
+              color: balance >= 0 ? '#fca5a5' : AppTheme.colors.accent,
+            }}
+          >
+            {currencyFormatter.format(balance)}
+          </Text>
+        </LinearGradient>
 
-				<View style={{ marginTop: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-					<Text style={{ fontSize: 18, fontWeight: '700', color: '#f1f5f9' }}>Movimientos</Text>
-					<Pressable
-						onPress={() => router.push('/add')}
-						style={{
-							borderRadius: 12,
-							backgroundColor: '#38bdf8',
-							paddingHorizontal: 12,
-							paddingVertical: 8,
-						}}
-					>
-						<Text style={{ fontSize: 13, fontWeight: '800', color: '#082f49' }}>+ Agregar</Text>
-					</Pressable>
-				</View>
+        <View style={{ marginTop: 14, flexDirection: 'row', borderRadius: 999, borderWidth: 1, borderColor: AppTheme.colors.border, backgroundColor: AppTheme.colors.card, padding: 4 }}>
+          {timeFilters.map((filter) => {
+            const isActive = timeFilter === filter.value;
 
-				<FlatList
-					data={transactions}
-					keyExtractor={(item) => String(item.id)}
-					contentContainerStyle={{ paddingTop: 12, paddingBottom: 24 }}
-					ListEmptyComponent={
-						<View
-							style={{
-								marginTop: 16,
-								borderRadius: 16,
-								borderWidth: 1,
-								borderColor: '#334155',
-								borderStyle: 'dashed',
-								paddingVertical: 28,
-								paddingHorizontal: 16,
-							}}
-						>
-							<Text style={{ textAlign: 'center', color: '#94a3b8' }}>Aun no tienes movimientos.</Text>
-						</View>
-					}
-					renderItem={({ item }) => {
-						const isIncome = item.category_type === 'income';
-						return (
-							<Pressable
-								onPress={() => router.push(`/transaction/${item.id}`)}
-								style={{
-									marginBottom: 10,
-									borderRadius: 14,
-									backgroundColor: '#0f172a',
-									borderWidth: 1,
-									borderColor: '#1e293b',
-									paddingHorizontal: 14,
-									paddingVertical: 12,
-								}}
-							>
-								<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-									<View style={{ flex: 1, paddingRight: 8 }}>
-										<Text style={{ color: '#f8fafc', fontSize: 15, fontWeight: '700' }}>{item.category_name}</Text>
-										<Text style={{ marginTop: 3, color: '#94a3b8', fontSize: 12 }}>{formatDate(item.date)}</Text>
-										<Text style={{ marginTop: 6, color: '#cbd5e1', fontSize: 13 }} numberOfLines={1}>
-											{item.note || 'Sin nota'}
-										</Text>
-									</View>
-									<Text style={{ color: isIncome ? '#34d399' : '#fb7185', fontSize: 16, fontWeight: '800' }}>
-										{isIncome ? '+' : '-'}{currencyFormatter.format(item.amount)}
-									</Text>
-								</View>
-							</Pressable>
-						);
-					}}
-				/>
-			</View>
-		</SafeAreaView>
-	);
+            return (
+              <Pressable
+                key={filter.value}
+                onPress={() => {
+                  void setTimeFilter(filter.value);
+                }}
+                style={{
+                  flex: 1,
+                  borderRadius: 999,
+                  paddingHorizontal: 8,
+                  paddingVertical: 8,
+                  backgroundColor: isActive ? AppTheme.colors.accent : AppTheme.colors.cardAlt,
+                }}
+              >
+                <Text style={{ textAlign: 'center', fontSize: 12, fontWeight: '800', color: isActive ? '#ffe4e6' : AppTheme.colors.textMuted }}>
+                  {filter.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={{ marginTop: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: AppTheme.colors.text }}>Movimientos</Text>
+          <Pressable
+            onPress={() => router.push('/add')}
+            style={{
+              borderRadius: 12,
+              backgroundColor: AppTheme.colors.accent,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+            }}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '900', color: '#fff1f2' }}>+ Agregar</Text>
+          </Pressable>
+        </View>
+
+        <FlatList
+          data={transactions}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={{ paddingTop: 12, paddingBottom: 24 }}
+          ListFooterComponent={<ExpenseChart />}
+          ListEmptyComponent={
+            <View
+              style={{
+                marginTop: 16,
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: AppTheme.colors.border,
+                borderStyle: 'dashed',
+                paddingVertical: 28,
+                paddingHorizontal: 16,
+                backgroundColor: AppTheme.colors.card,
+              }}
+            >
+              <Text style={{ textAlign: 'center', color: AppTheme.colors.textMuted }}>Aun no tienes movimientos.</Text>
+            </View>
+          }
+          renderItem={({ item }) => {
+            const isIncome = item.category_type === 'income';
+            return (
+              <Pressable
+                onPress={() => router.push(`/transaction/${item.id}`)}
+                style={{
+                  marginBottom: 10,
+                  borderRadius: 14,
+                  backgroundColor: AppTheme.colors.card,
+                  borderWidth: 1,
+                  borderColor: AppTheme.colors.border,
+                  paddingHorizontal: 14,
+                  paddingVertical: 12,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <View style={{ flex: 1, paddingRight: 8 }}>
+                    <Text style={{ color: AppTheme.colors.text, fontSize: 15, fontWeight: '700' }}>{item.category_name}</Text>
+                    <Text style={{ marginTop: 3, color: AppTheme.colors.textMuted, fontSize: 12 }}>{formatDate(item.date)}</Text>
+                    <Text style={{ marginTop: 6, color: '#d4d4d4', fontSize: 13 }} numberOfLines={1}>
+                      {item.note || 'Sin nota'}
+                    </Text>
+                  </View>
+                  <Text style={{ color: isIncome ? '#fda4af' : AppTheme.colors.accent, fontSize: 16, fontWeight: '900' }}>
+                    {isIncome ? '+' : '-'}
+                    {currencyFormatter.format(item.amount)}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          }}
+        />
+      </LinearGradient>
+    </SafeAreaView>
+  );
 }

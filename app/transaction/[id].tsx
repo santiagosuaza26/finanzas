@@ -1,4 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
 import {
 	Alert,
@@ -11,6 +12,8 @@ import {
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { AppTheme } from '../../src/constants/theme';
 
 import { useFinanceStore } from '../../src/store/useFinanceStore';
 
@@ -65,14 +68,14 @@ export default function TransactionDetailScreen() {
 
 	if (!transaction) {
 		return (
-			<SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
+			<SafeAreaView style={{ flex: 1, backgroundColor: AppTheme.colors.bg }} edges={['top', 'left', 'right']}>
 				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 }}>
-					<Text style={{ color: '#e2e8f0', fontSize: 16 }}>Transaccion no encontrada</Text>
+					<Text style={{ color: AppTheme.colors.text, fontSize: 16 }}>Transaccion no encontrada</Text>
 					<Pressable
 						onPress={() => router.replace('/')}
-						style={{ marginTop: 16, backgroundColor: '#38bdf8', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10 }}
+						style={{ marginTop: 16, backgroundColor: AppTheme.colors.accent, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 10 }}
 					>
-						<Text style={{ color: '#082f49', fontWeight: '800' }}>Volver</Text>
+						<Text style={{ color: '#fff1f2', fontWeight: '800' }}>Volver</Text>
 					</Pressable>
 				</View>
 			</SafeAreaView>
@@ -127,32 +130,33 @@ export default function TransactionDetailScreen() {
 	const isIncome = currentTransaction.category_type === 'income';
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: AppTheme.colors.bg }} edges={['top', 'left', 'right']}>
 			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-				<ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 34 }}>
+				<LinearGradient colors={AppTheme.gradients.background} style={{ flex: 1 }}>
+					<ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 34 }}>
 					{!isEditing ? (
 						<>
-							<View
+							<LinearGradient
+								colors={AppTheme.gradients.card}
 								style={{
 									borderRadius: 16,
 									borderWidth: 1,
-									borderColor: '#1e293b',
-									backgroundColor: '#0f172a',
+									borderColor: AppTheme.colors.border,
 									padding: 18,
 								}}
 							>
-								<Text style={{ color: '#94a3b8', textTransform: 'uppercase', fontSize: 12 }}>Categoria</Text>
-								<Text style={{ marginTop: 6, color: '#f8fafc', fontSize: 24, fontWeight: '800' }}>
+								<Text style={{ color: AppTheme.colors.textMuted, textTransform: 'uppercase', fontSize: 12 }}>Categoria</Text>
+								<Text style={{ marginTop: 6, color: AppTheme.colors.text, fontSize: 24, fontWeight: '800' }}>
 									{transaction.category_name}
 								</Text>
 
-								<Text style={{ marginTop: 14, color: '#94a3b8', textTransform: 'uppercase', fontSize: 12 }}>
+								<Text style={{ marginTop: 14, color: AppTheme.colors.textMuted, textTransform: 'uppercase', fontSize: 12 }}>
 									Monto
 								</Text>
 								<Text
 									style={{
 										marginTop: 8,
-										color: isIncome ? '#34d399' : '#fb7185',
+										color: isIncome ? '#fda4af' : AppTheme.colors.accent,
 										fontSize: 36,
 										fontWeight: '900',
 									}}
@@ -160,32 +164,32 @@ export default function TransactionDetailScreen() {
 									{isIncome ? '+' : '-'}{currencyFormatter.format(currentTransaction.amount)}
 								</Text>
 
-								<Text style={{ marginTop: 14, color: '#94a3b8', textTransform: 'uppercase', fontSize: 12 }}>Nota</Text>
-								<Text style={{ marginTop: 6, color: '#e2e8f0', fontSize: 15 }}>{currentTransaction.note || 'Sin nota'}</Text>
+								<Text style={{ marginTop: 14, color: AppTheme.colors.textMuted, textTransform: 'uppercase', fontSize: 12 }}>Nota</Text>
+								<Text style={{ marginTop: 6, color: '#e5e5e5', fontSize: 15 }}>{currentTransaction.note || 'Sin nota'}</Text>
 
-								<Text style={{ marginTop: 14, color: '#94a3b8', textTransform: 'uppercase', fontSize: 12 }}>
+								<Text style={{ marginTop: 14, color: AppTheme.colors.textMuted, textTransform: 'uppercase', fontSize: 12 }}>
 									Fecha
 								</Text>
-								<Text style={{ marginTop: 6, color: '#e2e8f0', fontSize: 15 }}>{formatDate(currentTransaction.date)}</Text>
-							</View>
+								<Text style={{ marginTop: 6, color: '#e5e5e5', fontSize: 15 }}>{formatDate(currentTransaction.date)}</Text>
+							</LinearGradient>
 
 							<Pressable
 								onPress={() => setIsEditing(true)}
-								style={{ marginTop: 16, backgroundColor: '#38bdf8', borderRadius: 12, paddingVertical: 13, alignItems: 'center' }}
+								style={{ marginTop: 16, backgroundColor: AppTheme.colors.accent, borderRadius: 12, paddingVertical: 13, alignItems: 'center' }}
 							>
-								<Text style={{ color: '#082f49', fontWeight: '900' }}>Editar</Text>
+								<Text style={{ color: '#fff1f2', fontWeight: '900' }}>Editar</Text>
 							</Pressable>
 
 							<Pressable
 								onPress={onDelete}
-								style={{ marginTop: 10, backgroundColor: '#f43f5e', borderRadius: 12, paddingVertical: 13, alignItems: 'center' }}
+								style={{ marginTop: 10, backgroundColor: '#991b1b', borderRadius: 12, paddingVertical: 13, alignItems: 'center', borderWidth: 1, borderColor: '#7f1d1d' }}
 							>
 								<Text style={{ color: '#fff1f2', fontWeight: '900' }}>Borrar</Text>
 							</Pressable>
 						</>
 					) : (
 						<>
-							<Text style={{ marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Monto</Text>
+							<Text style={{ marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Monto</Text>
 							<TextInput
 								value={amount}
 								onChangeText={setAmount}
@@ -195,9 +199,9 @@ export default function TransactionDetailScreen() {
 								style={{
 									borderRadius: 14,
 									borderWidth: 1,
-									borderColor: '#334155',
-									backgroundColor: '#0f172a',
-									color: '#f8fafc',
+									borderColor: AppTheme.colors.border,
+									backgroundColor: AppTheme.colors.card,
+									color: AppTheme.colors.text,
 									fontSize: 25,
 									fontWeight: '800',
 									paddingHorizontal: 16,
@@ -205,7 +209,7 @@ export default function TransactionDetailScreen() {
 								}}
 							/>
 
-							<Text style={{ marginTop: 20, marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Nota</Text>
+							<Text style={{ marginTop: 20, marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Nota</Text>
 							<TextInput
 								value={note}
 								onChangeText={setNote}
@@ -214,15 +218,15 @@ export default function TransactionDetailScreen() {
 								style={{
 									borderRadius: 14,
 									borderWidth: 1,
-									borderColor: '#334155',
-									backgroundColor: '#0f172a',
-									color: '#f8fafc',
+									borderColor: AppTheme.colors.border,
+									backgroundColor: AppTheme.colors.card,
+									color: AppTheme.colors.text,
 									paddingHorizontal: 16,
 									paddingVertical: 14,
 								}}
 							/>
 
-							<Text style={{ marginTop: 20, marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Categoria</Text>
+							<Text style={{ marginTop: 20, marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Categoria</Text>
 							<View style={{ gap: 8 }}>
 								{filteredCategories.map((category) => {
 									const isSelected = category.id === selectedCategoryId;
@@ -233,14 +237,14 @@ export default function TransactionDetailScreen() {
 											style={{
 												borderRadius: 12,
 												borderWidth: 1,
-												borderColor: isSelected ? '#38bdf8' : '#334155',
-												backgroundColor: isSelected ? '#0c4a6e' : '#0f172a',
+												borderColor: isSelected ? AppTheme.colors.accent : AppTheme.colors.border,
+												backgroundColor: isSelected ? '#3f0c13' : AppTheme.colors.card,
 												paddingHorizontal: 14,
 												paddingVertical: 12,
 											}}
 										>
-											<Text style={{ color: '#f8fafc', fontWeight: '700' }}>{category.name}</Text>
-											<Text style={{ marginTop: 2, color: '#94a3b8', fontSize: 12, textTransform: 'uppercase' }}>
+											<Text style={{ color: AppTheme.colors.text, fontWeight: '800' }}>{category.name}</Text>
+											<Text style={{ marginTop: 2, color: AppTheme.colors.textMuted, fontSize: 12, textTransform: 'uppercase' }}>
 												{category.type}
 											</Text>
 										</Pressable>
@@ -254,12 +258,12 @@ export default function TransactionDetailScreen() {
 									style={{
 										flex: 1,
 										borderRadius: 12,
-										backgroundColor: '#334155',
+										backgroundColor: AppTheme.colors.cardAlt,
 										alignItems: 'center',
 										paddingVertical: 13,
 									}}
 								>
-									<Text style={{ color: '#e2e8f0', fontWeight: '800' }}>Cancelar</Text>
+									<Text style={{ color: '#f5f5f5', fontWeight: '800' }}>Cancelar</Text>
 								</Pressable>
 
 								<Pressable
@@ -268,17 +272,18 @@ export default function TransactionDetailScreen() {
 									style={{
 										flex: 1,
 										borderRadius: 12,
-										backgroundColor: canSave && !isSaving ? '#10b981' : '#334155',
+										backgroundColor: canSave && !isSaving ? AppTheme.colors.accent : AppTheme.colors.cardAlt,
 										alignItems: 'center',
 										paddingVertical: 13,
 									}}
 								>
-									<Text style={{ color: '#052e16', fontWeight: '800' }}>{isSaving ? 'Guardando...' : 'Guardar'}</Text>
+									<Text style={{ color: '#fff1f2', fontWeight: '800' }}>{isSaving ? 'Guardando...' : 'Guardar'}</Text>
 								</Pressable>
 							</View>
 						</>
 					)}
-				</ScrollView>
+					</ScrollView>
+				</LinearGradient>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

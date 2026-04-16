@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useMemo, useState } from 'react';
 import {
 	Alert,
@@ -11,6 +12,8 @@ import {
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { AppTheme } from '../src/constants/theme';
 
 import { useFinanceStore } from '../src/store/useFinanceStore';
 
@@ -60,12 +63,14 @@ export default function AddTransactionScreen() {
 	}
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: '#020617' }} edges={['top', 'left', 'right']}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: AppTheme.colors.bg }} edges={['top', 'left', 'right']}>
 			<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-				<ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 36 }}>
-					<Text style={{ color: '#f8fafc', fontSize: 24, fontWeight: '800' }}>Nueva transaccion</Text>
+				<LinearGradient colors={AppTheme.gradients.background} style={{ flex: 1 }}>
+					<ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 36 }}>
+						<Text style={{ color: AppTheme.colors.text, fontSize: 24, fontWeight: '900' }}>Nueva transaccion</Text>
+						<Text style={{ marginTop: 4, color: AppTheme.colors.textMuted }}>Registra un movimiento con estilo profesional</Text>
 
-					<View style={{ marginTop: 18, flexDirection: 'row', gap: 10 }}>
+						<View style={{ marginTop: 18, flexDirection: 'row', gap: 10 }}>
 						<Pressable
 							onPress={() => {
 								setTransactionType('expense');
@@ -76,10 +81,12 @@ export default function AddTransactionScreen() {
 								borderRadius: 12,
 								paddingVertical: 12,
 								alignItems: 'center',
-								backgroundColor: transactionType === 'expense' ? '#f43f5e' : '#334155',
+								backgroundColor: transactionType === 'expense' ? AppTheme.colors.accent : AppTheme.colors.cardAlt,
+								borderWidth: 1,
+								borderColor: AppTheme.colors.border,
 							}}
 						>
-							<Text style={{ fontWeight: '800', color: '#f8fafc' }}>Egreso</Text>
+							<Text style={{ fontWeight: '900', color: '#fff1f2' }}>Egreso</Text>
 						</Pressable>
 
 						<Pressable
@@ -92,14 +99,16 @@ export default function AddTransactionScreen() {
 								borderRadius: 12,
 								paddingVertical: 12,
 								alignItems: 'center',
-								backgroundColor: transactionType === 'income' ? '#10b981' : '#334155',
+								backgroundColor: transactionType === 'income' ? '#ef4444' : AppTheme.colors.cardAlt,
+								borderWidth: 1,
+								borderColor: AppTheme.colors.border,
 							}}
 						>
-							<Text style={{ fontWeight: '800', color: '#f8fafc' }}>Ingreso</Text>
+							<Text style={{ fontWeight: '900', color: '#fff1f2' }}>Ingreso</Text>
 						</Pressable>
 					</View>
 
-					<Text style={{ marginTop: 20, marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Monto</Text>
+					<Text style={{ marginTop: 20, marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Monto</Text>
 					<TextInput
 						value={amount}
 						onChangeText={setAmount}
@@ -109,9 +118,9 @@ export default function AddTransactionScreen() {
 						style={{
 							borderRadius: 14,
 							borderWidth: 1,
-							borderColor: '#334155',
-							backgroundColor: '#0f172a',
-							color: '#f8fafc',
+							borderColor: AppTheme.colors.border,
+							backgroundColor: AppTheme.colors.card,
+							color: AppTheme.colors.text,
 							fontSize: 26,
 							fontWeight: '800',
 							paddingHorizontal: 16,
@@ -119,7 +128,7 @@ export default function AddTransactionScreen() {
 						}}
 					/>
 
-					<Text style={{ marginTop: 20, marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Nota</Text>
+					<Text style={{ marginTop: 20, marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Nota</Text>
 					<TextInput
 						value={note}
 						onChangeText={setNote}
@@ -128,28 +137,29 @@ export default function AddTransactionScreen() {
 						style={{
 							borderRadius: 14,
 							borderWidth: 1,
-							borderColor: '#334155',
-							backgroundColor: '#0f172a',
-							color: '#f8fafc',
+							borderColor: AppTheme.colors.border,
+							backgroundColor: AppTheme.colors.card,
+							color: AppTheme.colors.text,
 							paddingHorizontal: 16,
 							paddingVertical: 14,
 						}}
 					/>
 
-					<Text style={{ marginTop: 20, marginBottom: 8, color: '#94a3b8', fontWeight: '700' }}>Categoria</Text>
+					<Text style={{ marginTop: 20, marginBottom: 8, color: AppTheme.colors.textMuted, fontWeight: '700' }}>Categoria</Text>
 					<View style={{ gap: 8 }}>
 						{filteredCategories.length === 0 ? (
 							<View
 								style={{
 									borderRadius: 14,
 									borderWidth: 1,
-									borderColor: '#334155',
+									borderColor: AppTheme.colors.border,
 									borderStyle: 'dashed',
 									paddingVertical: 14,
 									paddingHorizontal: 12,
+									backgroundColor: AppTheme.colors.card,
 								}}
 							>
-								<Text style={{ color: '#94a3b8', textAlign: 'center' }}>No hay categorias para este tipo.</Text>
+								<Text style={{ color: AppTheme.colors.textMuted, textAlign: 'center' }}>No hay categorias para este tipo.</Text>
 							</View>
 						) : (
 							filteredCategories.map((category) => {
@@ -161,14 +171,14 @@ export default function AddTransactionScreen() {
 										style={{
 											borderRadius: 12,
 											borderWidth: 1,
-											borderColor: isSelected ? '#38bdf8' : '#334155',
-											backgroundColor: isSelected ? '#0c4a6e' : '#0f172a',
+											borderColor: isSelected ? AppTheme.colors.accent : AppTheme.colors.border,
+											backgroundColor: isSelected ? '#3f0c13' : AppTheme.colors.card,
 											paddingHorizontal: 14,
 											paddingVertical: 12,
 										}}
 									>
-										<Text style={{ color: '#f8fafc', fontWeight: '700' }}>{category.name}</Text>
-										<Text style={{ color: '#94a3b8', marginTop: 2, fontSize: 12, textTransform: 'uppercase' }}>
+										<Text style={{ color: AppTheme.colors.text, fontWeight: '800' }}>{category.name}</Text>
+										<Text style={{ color: AppTheme.colors.textMuted, marginTop: 2, fontSize: 12, textTransform: 'uppercase' }}>
 											{category.type}
 										</Text>
 									</Pressable>
@@ -183,16 +193,17 @@ export default function AddTransactionScreen() {
 						style={{
 							marginTop: 24,
 							borderRadius: 14,
-							backgroundColor: canSave && !isSaving ? '#38bdf8' : '#334155',
+							backgroundColor: canSave && !isSaving ? AppTheme.colors.accent : AppTheme.colors.cardAlt,
 							alignItems: 'center',
 							paddingVertical: 14,
 						}}
 					>
-						<Text style={{ color: '#082f49', fontWeight: '900', fontSize: 16 }}>
+						<Text style={{ color: '#fff1f2', fontWeight: '900', fontSize: 16 }}>
 							{isSaving ? 'Guardando...' : 'Guardar'}
 						</Text>
 					</Pressable>
-				</ScrollView>
+					</ScrollView>
+				</LinearGradient>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

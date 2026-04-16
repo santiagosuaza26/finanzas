@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AppTheme } from '../../constants/theme';
+import { AppTheme } from '../src/constants/theme';
 
-import { importDatabaseFromJson, exportDatabaseToJson } from '../services/backupService';
-import { useFinanceStore } from '../store/useFinanceStore';
+import { importDatabaseFromJson, exportDatabaseToJson } from '../src/services/backupService';
+import { useFinanceStore } from '../src/store/useFinanceStore';
 
 export default function SettingsScreen() {
   const initApp = useFinanceStore((state) => state.initApp);
