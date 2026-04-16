@@ -1,53 +1,40 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+export const AppTheme = {
+  colors: {
+    bg: '#050505',
+    bgSoft: '#111111',
+    card: '#171717',
+    cardAlt: '#1f1f1f',
+    border: '#2e2e2e',
+    text: '#ffffff',
+    textMuted: '#b5b5b5',
+    accent: '#ef4444',
+    accentStrong: '#dc2626',
+    success: '#10b981',
+    danger: '#f43f5e',
   },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+  gradients: {
+    background: ['#050505', '#111111'] as const,
+    card: ['#1a1a1a', '#101010'] as const,
+    accent: ['#ef4444', '#991b1b'] as const,
+    neutral: ['#2a2a2a', '#171717'] as const,
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+export const Colors = {
+  light: {
+    text: '#111111',
+    background: '#ffffff',
+    tint: AppTheme.colors.accent,
+    icon: '#6b7280',
+    tabIconDefault: '#6b7280',
+    tabIconSelected: AppTheme.colors.accent,
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  dark: {
+    text: AppTheme.colors.text,
+    background: AppTheme.colors.bg,
+    tint: AppTheme.colors.accent,
+    icon: AppTheme.colors.textMuted,
+    tabIconDefault: AppTheme.colors.textMuted,
+    tabIconSelected: AppTheme.colors.accent,
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+};
